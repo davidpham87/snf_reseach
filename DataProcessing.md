@@ -9,7 +9,7 @@ setwd('~/Dropbox/VizD3/snf_researcher') # Set working directory
 library('data.table') # Efficient data.table operations
 ```
 
-Export the xlsx file into csv as the csv file is corrupted.
+The file *Dataset2.csv* is exported from the xlsx file as the original csv file is corrupted.
 
 
 ```r
@@ -140,7 +140,7 @@ setnames(dat, 'name', 'country')
 
 ## Aggregate for maps
 
-These aggregations will be used to perform spatial analysis.
+These aggregations will be used to perform spatial analysis. Further, we also count the number of project in a country for a given moment in time (e.g. the number of projects in the USA in February 2001).
 
 
 ```r
@@ -151,6 +151,65 @@ dat.cyb <- dat[, .N, by = 'host_city,project_year,base_disciplin']
 dat.cb <- dat[, .N, by = 'host_city,base_disciplin']
 
 dat.agg <- list(dat.lyb, dat.lb, dat.cyb, dat.cb) # List
+
+### Creates a finer grid for plotting time series.
+dat.ts <- data.table(expand.grid(base_discplin = c(1,2,3),
+                      year = seq(2008, 2014), month = seq(1, 12),
+                     iso3= unique(dat$iso3)))
+dat.ts[, N:= 0];
+```
+
+```
+##        base_discplin year month iso3 N
+##     1:             1 2008     1  ALB 0
+##     2:             2 2008     1  ALB 0
+##     3:             3 2008     1  ALB 0
+##     4:             1 2009     1  ALB 0
+##     5:             2 2009     1  ALB 0
+##    ---                                
+## 19148:             2 2013    12  ZWE 0
+## 19149:             3 2013    12  ZWE 0
+## 19150:             1 2014    12  ZWE 0
+## 19151:             2 2014    12  ZWE 0
+## 19152:             3 2014    12  ZWE 0
+```
+
+```r
+setkeyv(dat.ts, names(dat.ts)[-5])
+
+UpdateCountPeriod <- function(x){
+  month.delta <- 24*3600*30
+  begin.dte <- x$project_start
+  end.dte <- x$project_end
+  base.disc <- x$base_disciplin
+  cty <- x$iso3
+  while(begin.dte < end.dte){
+    dat.ts[J(base.disc, year(begin.dte), month(begin.dte), cty), N:= N+1]
+    begin.dte <- begin.dte + month.delta
+  }
+}
+
+for (i in seq_along(dat$iso3)){
+  UpdateCountPeriod(dat[i])
+}
+
+### Update the date
+dat.ts[, date:= as.POSIXct(paste0(year, '-', month, '-1'), tz = 'UTC')];
+```
+
+```
+##        base_discplin year month iso3   N       date
+##     1:             1 2008     1  ALB   0 2008-01-01
+##     2:             1 2008     1  ARG   0 2008-01-01
+##     3:             1 2008     1  AUT   0 2008-01-01
+##     4:             1 2008     1  AUS   0 2008-01-01
+##     5:             1 2008     1  BIH   0 2008-01-01
+##    ---                                             
+## 19148:             3 2014    12  USA 179 2014-12-01
+## 19149:             3 2014    12  URY   0 2014-12-01
+## 19150:             3 2014    12  VNM   0 2014-12-01
+## 19151:             3 2014    12  ZAF   4 2014-12-01
+## 19152:             3 2014    12  ZWE   0 2014-12-01
 ```
 
 ## Conclusion
@@ -205,6 +264,11 @@ save(file='data/dat_clean.RData', dat)
 save(file='data/dat_agg_clean.RData', dat.agg)
 write.csv(file='data/dat_clean.csv', dat)
 write.csv(file='data/dat_agg_lyb_clean.csv', dat.lyb)
+write.csv(file='data/dat_ly_ts.csv', dat.ts)
 ```
+
+
+
+
 
 
