@@ -127,11 +127,11 @@ ggplot(subset(dat.c, N > 30), aes(reorder(host_city, N), N)) +
 
 ## Conclusion
 
-Without a lot of surprises the English speaking universities are dominating the location where the Swiss post-doc desire to pursues their career. However, we can suspect that language might also play a role as Germany and France/Canada(Quebec) are also among the favorite places where the Swiss post-doc expatriate.
+Without a lot of surprises the English speaking universities are dominating the location where the Swiss post-doc desire to pursues their career. However, we can suspect that language might also play a role as Germany, Austria and France/Canada are also among the favorite places where the Swiss post-docs expatriate.
 
 There are however several remaining questions and other visualizations they might be interesting:
 
 * What if we refine the analysis to the cities and not the country?
 * What about the finer information about the disciplins?
-* Are there relationship with the time?
+* Are there relationship with the time or trends? Especially concerning developping/emerging countries?
 * What about statistical analysis?
