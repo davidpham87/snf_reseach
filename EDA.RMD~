@@ -1,0 +1,35 @@
+Exploratory Data Analysis
+========================================================
+
+```{r}
+library('ggplot2')
+library('gridExtra')
+library('plyr')
+library('RColorBrewer')
+library('data.table')
+library('rCharts') # Interactive Plot
+library('knitr')
+
+load('data/dat_clean.RData') # load dat
+load('data/dat_agg_clean.RData') # load list dat.agg
+```
+
+
+
+# How many research project by base discipline
+
+```{r}
+dat.base <- dat[, .N, by = 'project_year,base_disc_name']
+
+ggplot(dat.base, aes(factor(project_year), N)) +
+  geom_bar(aes(fill = base_disc_name), stat='identity', position = 'dodge') +
+  scale_fill_brewer(palette = 'RdYlBu') +
+  labs('title' = 'Project by Year and Disciplin') 
+```
+
+```{r}
+dat.cb <- dat.agg[[4]]
+dat.c <- dat.cb[, list(N = sum(N)), by='host_city'][order(N)]
+
+
+```

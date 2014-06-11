@@ -1,0 +1,26 @@
+library(rgdal)
+library(ggplot2)
+library(maptools)
+
+
+
+gpclibPermit()
+
+world.map <- readOGR(dsn="data", layer="TM_WORLD_BORDERS_SIMPL-0.3")
+world.ggmap <- fortify(world.map, region = "NAME")
+
+n <- length(unique(world.ggmap$id))
+df <- data.frame(id = unique(world.ggmap$id),
+                 growth = 4*runif(n),
+                 category = factor(sample(1:5, n, replace=T)))
+
+ggplot(df, aes(map_id = id)) +
+  geom_map(aes(fill = growth, color = category), map = world.ggmap) +
+  expand_limits(x = world.ggmap$long, y = world.ggmap$lat) +
+  scale_fill_gradient(high = "red", low = "white", guide = "colorbar") +
+  scale_colour_hue(h = c(120, 240))
+
+ggplot(df, aes(map_id = id)) +
+  geom_map(aes(alpha = growth, fill = category), map = world.ggmap) +
+  expand_limits(x = world.ggmap$long, y = world.ggmap$lat) +
+  scale_alpha(range = c(0.2, 1), na.value = 1)

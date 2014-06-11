@@ -1,0 +1,93 @@
+Data Processing for SNF Project
+========================================================
+
+## Loading Data in R    
+
+
+```{r, results='hide'}
+setwd('~/Dropbox/VizD3/snf_researcher') # Set working directory
+library('data.table') # Efficient data.table operations
+```
+
+Export the xlsx file into csv as the csv file is corrupted.
+
+```{r data_loading}
+dat <- fread('data/Dataset2.csv')
+head(dat)
+summary(dat)
+```
+
+## Column renaming
+For column name, the python/c++ standard will be used.
+
+```{r column_renaming}
+setnames(dat, old=names(dat), new=tolower(names(dat)))
+setnames(dat, c('hostinstitute', 'maindisciplin', 'maindiscnummer'),
+          c('host_institute', 'main_disciplin', 'main_disc_nummer'))
+```
+
+## Date processing
+```{r, results = 'hide'}
+ProcessDate <- function(x){
+  return(as.POSIXct(strptime(x, format = '%d.%m.%Y', tz = 'UTC')))
+}
+
+cols <- c('project_start', 'project_end')
+for (col in cols) dat[, (col) := ProcessDate(get(col))]
+dat[, project_length := project_end - project_start] # Project length
+```
+
+## Reduce variance in bias-variance trade-off
+```{r, results='hide'}
+dat[, base_disciplin := main_disc_nummer %/% 100]
+dt.bdisc <- data.table(base_disciplin = c(1,2,3),
+ base_disc_name = c('Social Sciences', 'Base Sciences', 'Biology_Med'))
+setkey(dat, base_disciplin)
+dat <- dat[J(dt.bdisc)]
+```
+
+## Add Countries in full name
+A full name of the country is appened in order to draw the maps.
+
+The *country.csv* file can found at this [github link](https://github.com/umpirsky/country-list/edit/master/country/cldr/en/country.csv).
+
+```{r}
+country <- fread('data/country.csv')
+
+setkey(country, iso2) # Use data.table Join
+setkey(dat, host_country)
+dat <- country[J(dat)]
+```
+
+## NA treatment
+
+```{r, results='hide'}
+nrow(dat) - sum(complete.cases(dat)) # Number of incomplete case
+dat <- na.omit(dat)
+setnames(dat, 'name', 'country')
+```
+
+## Aggregate for maps
+
+
+```{r, result = 'hide'}
+dat.lyb <- dat[, .N, by = 'iso3,project_year,base_disciplin'] # l for land, y year, b base_discplin
+dat.lb <- dat[, .N, by = 'iso3,base_disciplin'] # l for land
+
+dat.cyb <- dat[, .N, by = 'host_city,project_year,base_disciplin']
+dat.cb <- dat[, .N, by = 'host_city,base_disciplin']
+
+dat.agg <- list(dat.lyb, dat.lb, dat.cyb, dat.cb) # List
+```
+
+## Conclusion
+
+```{r}
+head(dat)
+save(file='data/dat_clean.RData', dat)
+save(file='data/dat_agg_clean.RData', dat.agg)
+write.csv(file='data/dat_clean.csv', dat)
+write.csv(file='data/dat_agg_lyb_clean.csv', dat.lyb)
+```
+
+
