@@ -1,3 +1,0 @@
-install.packages('sp')
-install.packages('rgdal') # GDAL must be installed
-install.packages('maptools')
