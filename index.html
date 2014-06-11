@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+<<<<<<< HEAD
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -81,3 +82,171 @@ $ git checkout gh-pages
   
   </body>
 </html>
+=======
+
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="css/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="css/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="css/print.css" media="print" />
+    <link rel="stylesheet" href="css/nv.d3.css">
+
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <script src="scripts/d3.v3.min.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="http://d3js.org/queue.v1.min.js"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>  
+
+
+    <script src='http://timelyportfolio.github.io/rCharts_nvd3_tests/libraries/widgets/nvd3/js/nv.d3.min-new.js' type='text/javascript'></script> <!-- NVD3 -->
+    <!-- <script src='http://nvd3.org/assets/lib/fisheye.js' type='text/javascript'></script> -->
+
+    <!-- <link type="text/css" rel="stylesheet" href="style.css"/> -->
+    <title> Swiss Postdoc Research Location </title>
+    <!-- Photo Slides inside the webpage -->
+    <script src="js/jquery.flexslider-min.js"></script>
+	  <link rel="stylesheet" href="css/flexslider.css" />     
+    <!-- Color as in colorbrewer -->
+	  <link rel="stylesheet" href="css/colorbrewer.css" />
+    <!-- Usefule for the tooltip -->
+    <link rel="stylesheet" href="css/d3-style.css" />
+
+    <style type="text/css">     
+
+      #pictureSlider {
+      width:640px;
+      height:480px;
+      }
+
+      .background {
+      background:#2e7bcf;
+      }
+
+      .overlay {
+      fill: none;
+      pointer-events: all;
+      }
+
+      .land {
+      fill: #000;
+      }
+
+      .boundary {
+      fill: none;
+      stroke: #fff;
+      stroke-width: .5px;
+      }
+
+      .city {
+      fill: rgba(255, 255, 255, 1);
+      stroke: red;
+      stroke-width: 2;
+      }
+
+      svg {margin-left:auto; margin-right: auto;display:block;}
+      svg:not(:root) { overflow: hidden; }
+
+      .center {
+      margin-left:auto; 
+      margin-right: auto;
+      display:block;
+      }
+
+      #wrap  {
+      width: 1280;
+      margin:0 auto;
+      text-align:center;
+      }
+
+      .wrap_li {
+      display:inline-block
+      }
+
+
+      .axis {
+      font: 10px sans-serif;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+      }
+
+      .axis .domain {
+      fill: none;
+      stroke: #000;
+      stroke-opacity: .3;
+      stroke-width: 10px;
+      stroke-linecap: round;
+      }
+
+      .axis .halo {
+      fill: none;
+      stroke: #ddd;
+      stroke-width: 8px;
+      stroke-linecap: round;
+      }
+
+      .slider .handle {
+      fill: #fff;
+      stroke: #000;
+      stroke-opacity: .5;
+      stroke-width: 1.25px;
+      pointer-events: none;
+      }
+
+    </style>
+  </head>
+  <body>
+    
+    <header>
+      <div class="inner">
+        <h1>Swiss Postdoc Research Location</h1>
+        <h2>An Swiss National Fonds EDA</h2>
+        <a href="https://github.com/davidpham87/snf_reseach/" class="button"><small>View project on</small>GitHub</a>        
+      </div>
+    </header>
+
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+
+          <h3>
+            <a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a> 
+            Distribution through time of the Swiss funded post-docs
+          </h3>
+          
+          <div class='wrap' text-align='center'>
+            The SNF constantly increased its numbers of scholarships recipients. The distribution across the disciplins does not change much during the 6 years.
+            <svg class='center' id="barplot" align='center' height=480 width=960></svg>
+          </div>
+
+          <h3> Chloropeth of the location of Swiss post-docs </h3>
+
+          <div>
+            <svg id='worldMapSlider' height=100 width=960></svg>
+            <svg id="worldMap" height=600 width=960 style='background:#2e7bcf'></svg>
+          </div>
+        </section>          
+      </div>
+    </div>
+
+    <hr>
+    <hr>
+    <hr>
+
+
+    <div style="text-align:center;">
+	    <span style="color:rgb(0,0,0)">
+		    &copy; 2014-05, David Pham. HTML & CSS Templates by Github.
+	    </span>
+    </div>
+    <script type="text/javascript" src="js/slider.js"></script>
+    <script type="text/javascript" src="scripts/world_map.js"></script>
+    <script type="text/javascript" src="scripts/bar_plot.js"></script>
+  </body>
+</html>
+>>>>>>> master

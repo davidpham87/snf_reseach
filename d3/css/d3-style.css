@@ -1,0 +1,164 @@
+.node circle {
+    cursor: pointer;
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.node text{
+    font-size: 11px;
+    font-color: #000;
+}
+
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+}
+
+.d3-tip {
+    width : 400px;
+    line-height: 1;
+    font-weight: bold;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 20px;
+}
+
+.narrow{
+    width : 200px;
+    height: 60px;
+    line-height: 1;
+}
+
+.worldMapTip {
+    width : 200px;
+    height: 20px;
+    line-height: 1;
+}
+
+.bar {
+    fill: steelblue;
+}
+
+.bar:hover {
+    fill: brown;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.y.axis path {
+    display: none;
+}
+
+rect {
+    fill: none;
+    pointer-events: all;
+}
+
+.snowHearts{
+    fill: none;
+}
+
+circle {
+    fill: none;
+    stroke-width: 2.5px;
+}
+
+.slider .handle {
+    fill: #fff;
+    <!-- stroke: #000; -->
+    stroke-opacity: .5;
+    stroke-width: 1.25px;
+    pointer-events: none;
+}
+
+.axis {
+    font: 10px sans-serif;
+    fill: #000;
+}
+
+.axis {
+    font: 10px sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+#hard-skill-axis .domain{
+    font: 10px sans-serif;
+    stroke-width: 2px;
+    stroke: #000;
+    stroke-opacity: 1;
+}
+
+.axis .domain {
+    fill: none;
+    stroke: #000;
+    stroke-opacity: .3;
+    stroke-width: 10px;
+    stroke-linecap: round;
+}
+
+.axis .halo {
+    fill: none;
+    stroke: #ddd;
+    stroke-width: 8px;
+    stroke-linecap: round;
+}
+
+svg {
+    margin-left:auto;
+    margin-right: auto;
+    display: block;
+}
+
+#svgOmgHearts {
+    background: #000;
+}
+
+span.left {
+    float:left;
+}
+
+span.right {
+    float:right;
+}
+
+.country {
+    fill: #bbb
+}
+
+.canton-boundaries {
+    fill: #bbb;
+    stroke: #fff;
+    stroke-width: 1;
+}
+
+.municipality-boundaries {
+    fill: none;
+    stroke: #fff;
+    stroke-width: .5;
+}
+
+.municipality-voronoi {
+    fill: none;
+    pointer-events: all;
+    stroke: #fff;
+    stroke-width: 0.5;
+}
+
+.key path {
+    display: none;
+}
+
+.key line {
+    stroke: #000;
+    shape-rendering: crispEdges;
+}

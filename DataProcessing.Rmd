@@ -1,0 +1,133 @@
+Data Processing for SNF Project
+========================================================
+
+## Loading Data in R    
+
+```{r, results='hide'}
+setwd('~/Dropbox/VizD3/snf_researcher') # Set working directory
+library('data.table') # Efficient data.table operations
+```
+
+The file *Dataset2.csv* is exported from the xlsx file as the original csv file is corrupted.
+
+```{r data_loading}
+dat <- fread('data/Dataset2.csv')
+head(dat)
+summary(dat)
+```
+
+## Column renaming
+For column name, the python/c++ standard will be used.
+
+```{r column_renaming}
+setnames(dat, old=names(dat), new=tolower(names(dat)))
+setnames(dat, c('hostinstitute', 'maindisciplin', 'maindiscnummer'),
+          c('host_institute', 'main_disciplin', 'main_disc_nummer'))
+```
+
+## Date processing
+```{r, results = 'hide'}
+ProcessDate <- function(x){
+  return(as.POSIXct(strptime(x, format = '%d.%m.%Y', tz = 'UTC')))
+}
+
+cols <- c('project_start', 'project_end')
+for (col in cols) dat[, (col) := ProcessDate(get(col))]
+dat[, project_length := project_end - project_start] # Project length
+```
+
+## Reduce variance in bias-variance trade-off
+
+There are too many disciplines. Hence any analysis would be bound to have too much variances and it might be better to perform the analysis on the base disciplin first and then if time allows to run the analysis with the more refined data.
+
+```{r, results='hide'}
+dat[, base_disciplin := main_disc_nummer %/% 100]
+dt.bdisc <- data.table(base_disciplin = c(1,2,3),
+ base_disc_name = c('Social Sciences', 'Basic Sciences', 'Biology_Med'))
+setkey(dat, base_disciplin)
+dat <- dat[J(dt.bdisc)]
+
+dat[, host_city := tolower(host_city)] # case not sensitive
+```
+
+## Add Countries in full name
+A full name of the country is appened in order to draw the maps.
+
+The *country.csv* file can found at this [github link](https://github.com/umpirsky/country-list/edit/master/country/cldr/en/country.csv).
+
+```{r}
+country <- fread('data/country.csv')
+
+setkey(country, iso2) # Use data.table Join
+setkey(dat, host_country)
+dat <- country[J(dat)]
+```
+
+## NA treatment
+
+There are some NA (mainly because of the new country has not been entered yet).
+
+```{r, results='hide'}
+nrow(dat) - sum(complete.cases(dat)) # Number of incomplete case
+dat <- na.omit(dat)
+setnames(dat, 'name', 'country')
+```
+
+## Aggregate for maps
+
+These aggregations will be used to perform spatial analysis. Further, we also count the number of project in a country for a given moment in time (e.g. the number of projects in the USA in February 2001).
+
+```{r, cache=T, result = 'hide'}
+dat.lyb <- dat[, .N, by = 'iso3,project_year,base_disciplin'] # l for land, y year, b base_discplin
+dat.lb <- dat[, .N, by = 'iso3,base_disciplin'] # l for land
+
+dat.cyb <- dat[, .N, by = 'host_city,project_year,base_disciplin']
+dat.cb <- dat[, .N, by = 'host_city,base_disciplin']
+
+dat.agg <- list(dat.lyb, dat.lb, dat.cyb, dat.cb) # List
+
+### Creates a finer grid for plotting time series.
+dat.ts <- data.table(expand.grid(base_discplin = c(1,2,3),
+                      year = seq(2008, 2014), month = seq(1, 12),
+                     iso3= unique(dat$iso3)))
+dat.ts[, N:= 0];
+setkeyv(dat.ts, names(dat.ts)[-5])
+
+UpdateCountPeriod <- function(x){
+  month.delta <- 24*3600*30
+  begin.dte <- x$project_start
+  end.dte <- x$project_end
+  base.disc <- x$base_disciplin
+  cty <- x$iso3
+  while(begin.dte < end.dte){
+    dat.ts[J(base.disc, year(begin.dte), month(begin.dte), cty), N:= N+1]
+    begin.dte <- begin.dte + month.delta
+  }
+}
+
+for (i in seq_along(dat$iso3)){
+  UpdateCountPeriod(dat[i])
+}
+
+### Update the date
+dat.ts[, date:= as.POSIXct(paste0(year, '-', month, '-1'), tz = 'UTC')];
+```
+
+## Conclusion
+
+Saving the files.
+
+```{r}
+head(dat)
+save(file='data/dat_clean.RData', dat)
+save(file='data/dat_agg_clean.RData', dat.agg)
+write.csv(file='data/dat_clean.csv', dat)
+write.csv(file='data/dat_agg_lyb_clean.csv', dat.lyb)
+write.csv(file='data/dat_ly_ts.csv', dat.ts)
+```
+
+
+
+
+
+
