@@ -20,8 +20,14 @@ var width = 960,
 
   var myPlotInterval;
 
+  var value = brush.extent()[0];
+  var month = Math.floor((value - Math.floor(value))*100/12) + 1;
+  var this_date;
+
   function updateBrush(){
     var value = brush.extent()[0];
+    var month = Math.floor((value - Math.floor(value))*100/12) + 1;
+    var new_date = new Date(value, month, 1, 0, 0, 0, 0);
     
     if (d3.event.sourceEvent) { // not a programmatic event
       value = x.invert(d3.mouse(this)[0]);
@@ -29,7 +35,13 @@ var width = 960,
     }
 
     handle.attr("cx", x(value));      
+        
     // Here for doing the animation
+    if (this_date != new_date){
+      updateMap(new_date);
+      this_date = new_date;
+    }    
+
     // clearInterval(myPlotInterval);
     // myPlotInterval = setInterval(plotHeart, Math.floor(100-value+1));
   }
@@ -39,12 +51,13 @@ var width = 960,
 
    svg_slider.append("g")
     .attr("class", "x axis")
-    .attr("transform", "translate(0 " + height_slider - 50 + ")")
+    .attr("transform", "translate(0 " + 30 + ")")
     .attr("z-index", "10")
     .attr("fill", "black")
     .call(d3.svg.axis()
           .scale(x)
           .orient("bottom")
+          .tickValues([2008, 2009, 2010, 2011, 2012, 2013, 2014])
           .tickFormat(function(d) { return d; })
           .tickSize(0)
           .tickPadding(4)
@@ -53,7 +66,7 @@ var width = 960,
          )
     .append("text")
     .attr("x", x(2008))
-    .attr("dy", "-1em")
+    .attr("dy", "-2em")
     .style("text-anchor", "end")
     .text("Date")
     .select(".domain")
@@ -72,10 +85,11 @@ var width = 960,
 
   var handle = slider.append("circle")
     .attr("class", "handle")
-    .attr("transform", "translate(0," + height_slider - 50  + ")")
+    .attr("transform", "translate(0," + 30  + ")")
     .attr("r", 9);
 
 //===============================================================================
+//World map
 
 //d3.geo.azimuthalEqualArea()
 var projection = d3.geo.mercator() 
@@ -87,6 +101,10 @@ var path = d3.geo.path()
   .projection(projection);
 
 var graticule = d3.geo.graticule();
+
+var quantize = d3.scale.quantize()
+  .domain([0, 6])
+  .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));  // Color
 
 // Zoom hack
 var zoom = d3.behavior.zoom()
@@ -101,13 +119,9 @@ d3.select('#worldMap')
   .attr("height", height)
   .call(zoom);
 
-var quantize = d3.scale.quantize()
-  .domain([0, .15])
-  .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
+var svg =  d3.select('#worldMap').append("g");
 
 var city_radius = 5;
-
-var svg =  d3.select('#worldMap').append("g");
 
 function zoomed() {
   var d3_scale = d3.event.scale;
@@ -123,14 +137,24 @@ svg.append("path")
   .attr("class", "graticule")
   .attr("d", path);
 
-var count_by_id = d3.map();
+var count_by_date = d3.map();
 var date_format = d3.time.format("%Y-%m-%d");
 var data_ts;
+var data_nest;
+var dte = date_format.parse('2009-01-01');
+var world_data;
 // function(error, data){data_ts = data;})
 
 queue()
   .defer(d3.json, "data/world-50m.json")
-  .defer(d3.csv, "data/dat_ly_ts.csv")
+  .defer(d3.csv, "data/dat_ly_ts.csv", function(d){
+    return {
+      N: +d.N,
+      date: date_format.parse(d.date),
+      id: d.numcode,
+      base_disciplin: d.base_discplin //Mistake/Typo in the csv file...
+    }
+  })
   .await(createMap);
 
 // d3.csv('data/location.csv', putCityVoronoi)
@@ -138,22 +162,55 @@ queue()
 
 function createMap(error, world, data) {
   data_ts = data;
+  world_data = world;
+  // console.log(data[0]);
+  
   var nest = d3.nest()
-    .key(function(d) {return d.iso3})
-    .rollup(function(leaves) {return leaves.N})
+    .key(function(d) {return d.date})
+    .key(function(d) {return d.id})
+    .rollup(function(leaves) {
+      return d3.sum(leaves, function(d) {return d.N});
+    })
     .entries(data);
 
+  console.log(nest[23].values[0]);
+  data_nest = nest;
 
-  svg.insert("path", ".graticule")
-    .datum(topojson.feature(world, world.objects.land))
-    .attr("class", "land")
+  for (var i = 0; i < data_nest.length; ++i){
+    var count_by_country = d3.map();
+    var country_count = data_nest[i].values;    
+
+    for (var j=0; j < country_count.length;  ++j){
+      count_by_country.set(country_count[j].key, country_count[j].values);
+    }
+
+    count_by_date.set(data_nest[i].key, count_by_country);
+  }
+    
+  svg.selectAll(".country")  
+    .data(topojson.feature(world, world.objects.countries).features)
+  .enter().insert("path", ".graticule")
+    .attr("class", function(d) {
+      console.log(d);
+      var n = count_by_date.get(dte).get(String(d.id));
+      n = n !== undefined ? n : 0;
+      console.log(n);
+      return quantize(Math.log(n+1));})
     .attr("d", path);
+}
 
-  svg.insert("path", ".graticule")
-      .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
-      .attr("class", "boundary")
-      .attr("d", path);
 
+function updateMap(new_date){
+
+  svg.selectAll(".country")  
+    .data(topojson.feature(world_data, world_data.objects.countries).features)
+  .enter().insert("path", ".graticule")
+    .attr("class", function(d) {
+      var n = count_by_date.get(new_date).get(String(d.id));
+      n = n !== undefined ? n : 0;
+      console.log(n);
+      return quantize(Math.log(n+1));})
+    .attr("d", path);
 
 }
 

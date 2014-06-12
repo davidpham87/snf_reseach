@@ -153,25 +153,25 @@ dat.cb <- dat[, .N, by = 'host_city,base_disciplin']
 dat.agg <- list(dat.lyb, dat.lb, dat.cyb, dat.cb) # List
 
 ### Creates a finer grid for plotting time series.
-dat.ts <- data.table(expand.grid(base_discplin = c(1,2,3),
+dat.ts <- data.table(expand.grid(base_disciplin = c(1,2,3),
                       year = seq(2008, 2014), month = seq(1, 12),
-                     iso3= unique(dat$iso3)))
+                     numcode= unique(dat$numcode)))
 dat.ts[, N:= 0];
 ```
 
 ```
-##        base_discplin year month iso3 N
-##     1:             1 2008     1  ALB 0
-##     2:             2 2008     1  ALB 0
-##     3:             3 2008     1  ALB 0
-##     4:             1 2009     1  ALB 0
-##     5:             2 2009     1  ALB 0
-##    ---                                
-## 19148:             2 2013    12  ZWE 0
-## 19149:             3 2013    12  ZWE 0
-## 19150:             1 2014    12  ZWE 0
-## 19151:             2 2014    12  ZWE 0
-## 19152:             3 2014    12  ZWE 0
+##        base_disciplin year month numcode N
+##     1:              1 2008     1       8 0
+##     2:              2 2008     1       8 0
+##     3:              3 2008     1       8 0
+##     4:              1 2009     1       8 0
+##     5:              2 2009     1       8 0
+##    ---                                    
+## 19148:              2 2013    12     716 0
+## 19149:              3 2013    12     716 0
+## 19150:              1 2014    12     716 0
+## 19151:              2 2014    12     716 0
+## 19152:              3 2014    12     716 0
 ```
 
 ```r
@@ -182,7 +182,7 @@ UpdateCountPeriod <- function(x){
   begin.dte <- x$project_start
   end.dte <- x$project_end
   base.disc <- x$base_disciplin
-  cty <- x$iso3
+  cty <- x$numcode
   while(begin.dte < end.dte){
     dat.ts[J(base.disc, year(begin.dte), month(begin.dte), cty), N:= N+1]
     begin.dte <- begin.dte + month.delta
@@ -198,18 +198,18 @@ dat.ts[, date:= as.POSIXct(paste0(year, '-', month, '-1'), tz = 'UTC')];
 ```
 
 ```
-##        base_discplin year month iso3   N       date
-##     1:             1 2008     1  ALB   0 2008-01-01
-##     2:             1 2008     1  ARG   0 2008-01-01
-##     3:             1 2008     1  AUT   0 2008-01-01
-##     4:             1 2008     1  AUS   0 2008-01-01
-##     5:             1 2008     1  BIH   0 2008-01-01
-##    ---                                             
-## 19148:             3 2014    12  USA 179 2014-12-01
-## 19149:             3 2014    12  URY   0 2014-12-01
-## 19150:             3 2014    12  VNM   0 2014-12-01
-## 19151:             3 2014    12  ZAF   4 2014-12-01
-## 19152:             3 2014    12  ZWE   0 2014-12-01
+##        base_disciplin year month numcode   N       date
+##     1:              1 2008     1       8   0 2008-01-01
+##     2:              1 2008     1      32   0 2008-01-01
+##     3:              1 2008     1      36   0 2008-01-01
+##     4:              1 2008     1      40   0 2008-01-01
+##     5:              1 2008     1      56   0 2008-01-01
+##    ---                                                 
+## 19148:              3 2014    12     826  55 2014-12-01
+## 19149:              3 2014    12     834   0 2014-12-01
+## 19150:              3 2014    12     840 179 2014-12-01
+## 19151:              3 2014    12     854   0 2014-12-01
+## 19152:              3 2014    12     858   0 2014-12-01
 ```
 
 ## Conclusion

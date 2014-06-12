@@ -87,9 +87,9 @@ dat.cb <- dat[, .N, by = 'host_city,base_disciplin']
 dat.agg <- list(dat.lyb, dat.lb, dat.cyb, dat.cb) # List
 
 ### Creates a finer grid for plotting time series.
-dat.ts <- data.table(expand.grid(base_discplin = c(1,2,3),
+dat.ts <- data.table(expand.grid(base_disciplin = c(1,2,3),
                       year = seq(2008, 2014), month = seq(1, 12),
-                     iso3= unique(dat$iso3)))
+                     numcode= unique(dat$numcode)))
 dat.ts[, N:= 0];
 setkeyv(dat.ts, names(dat.ts)[-5])
 
@@ -98,7 +98,7 @@ UpdateCountPeriod <- function(x){
   begin.dte <- x$project_start
   end.dte <- x$project_end
   base.disc <- x$base_disciplin
-  cty <- x$iso3
+  cty <- x$numcode
   while(begin.dte < end.dte){
     dat.ts[J(base.disc, year(begin.dte), month(begin.dte), cty), N:= N+1]
     begin.dte <- begin.dte + month.delta
