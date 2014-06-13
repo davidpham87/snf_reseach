@@ -54,7 +54,7 @@
       .boundary {
       fill: none;
       stroke: #fff;
-      stroke-width: .5px;
+      stroke-width: .1px;
       }
 
       .city {
@@ -142,10 +142,30 @@
           </div>
 
           <h3> Chloropeth of the location of Swiss post-docs </h3>
-
+          This is the number of projects led by Swiss post-docs by country on the logarithmic scales for the past years.
           <div class='Oranges'>
+            <br>
+            <div style='vertical-align: middle; display: inline-block; clear:both;width:960px'> 
+              <button type="button" id="worldMapButton" 
+                      style='float:left;'>
+                Play Animation 
+              </button>
+              <h5 style='margin-left:70px; float:left;'>
+                Number of projects:
+              </h5>
+              <svg id='worldMapKey' height=50 width=480 
+                   style='float:left;margin-left:20px'></svg>              
+              <h4 id='worldDate' style='margin-left:20px; float:left'>
+                Jan 01 2008 
+              </h4>
+            </div>
+
             <svg id='worldMapSlider' height=100 width=960></svg>
-            <svg id="worldMap" height=600 width=960 style='background:#2e7bcf'></svg>
+            <div id="worldMapDiv">
+            <svg id="worldMap" height=600 width=960 style='background:#2e7bcf'>
+              <g id='worldMap_g'></g>
+            </svg>
+            <div>
           </div>
         </section>          
       </div>
@@ -154,7 +174,6 @@
     <hr>
     <hr>
     <hr>
-
 
     <div style="text-align:center;">
 	    <span style="color:rgb(0,0,0)">
