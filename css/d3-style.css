@@ -28,13 +28,13 @@
 
 .narrow{
     width : 200px;
-    height: 60px;
+    height: 100px;
     line-height: 1;
 }
 
 .worldMapTip {
     width : 200px;
-    height: 20px;
+    height: 80px;
     line-height: 1;
 }
 

@@ -201,8 +201,8 @@ hr {
 }
 
 table {
-  width: 100%;
-  border: 1px solid #ebebeb;
+  width: 200px;
+  /* border: 1px solid #ebebeb; */
 }
 
 th {
@@ -210,8 +210,8 @@ th {
 }
 
 td {
-  border: 1px solid #ebebeb;
-  text-align: center; 
+  /* border: 1px solid #ebebeb; */
+  text-align: left; 
   font-weight: 300;
 }
 

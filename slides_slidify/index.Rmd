@@ -1,0 +1,34 @@
+---
+title       : My presentation
+subtitle    : Data Presentation
+author      : David Pham
+job         : Quantitative
+framework   : shower     # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Read-And-Delete
+
+1. Edit YAML front matter
+2. Write using R Markdown
+3. Use an empty line followed by three dashes to separate slides!
+
+---
+
+## Slide 2
+
+Test slide 2.
+
+$x^2+ x- 12 = 0 = (x+4)(x-3)$
+
+```{r, echo=FALSE}
+x <- sum(1:10);
+11*10/2
+```
+
+$\pi = $ `r pi`.
+

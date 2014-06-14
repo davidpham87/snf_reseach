@@ -72,7 +72,6 @@ function createBrush(){
       this_date = new_date;
       d3.select('#worldDate').text(new_date.toString().substring(4,15)); // Update da
     }    
-
   }
 
   svg_slider.append("g")
@@ -121,6 +120,7 @@ function createBrush(){
     .on("click", function(){
       clearInterval(refreshIntervalId);
     });
+
   //=============================================================================
   // Animation on play button
   function update_animation(features){
@@ -175,7 +175,24 @@ createBrush();
 //===============================================================================
 // World map
 
+
+// Make sure there are not two worlds
+function keepOneWorld(){
+  var svg =  d3.selectAll('#worldMap g');
+  if (svg[0].length < 2) {
+    return;
+  }
+
+  for (var i=1; i<svg[0].length; ++i){
+    svg[0][i].remove();    
+  }
+}
+
+
 function createWorldMap(){
+
+
+  keepOneWorld(); // Make sure there is only one world displayed
 
   //d3.geo.azimuthalEqualArea()
   var projection = d3.geo.mercator() 
@@ -191,8 +208,6 @@ function createWorldMap(){
   var quantize = d3.scale.quantize()
     .domain([0, 6])
     .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));  // Color
-
-
 
   // Zoom hack
   var zoom = d3.behavior.zoom()
@@ -223,8 +238,6 @@ function createWorldMap(){
     .attr("class", "graticule")
     .attr("d", path);
 
-
-
   queue()
     .defer(d3.json, "data/world-110m.json")
     .defer(d3.csv, "data/dat_ly_ts.csv", function(d){
@@ -232,7 +245,7 @@ function createWorldMap(){
         N: +d.N,
         date: date_format.parse(d.date),
         id: d.numcode,
-        base_disciplin: d.base_discplin //Mistake/Typo in the csv file...
+        base_disciplin: d.base_disciplin //Mistake/Typo in the csv file...
       }
     })
     .defer(d3.csv, "data/country.csv", function(d){
@@ -259,6 +272,7 @@ function createWorldMap(){
     data_nest = d3.nest()
       .key(function(d) {return d.date})
       .key(function(d) {return d.id})
+      .key(function(d) {return d.base_disciplin})
       .rollup(function(leaves) {
         return d3.sum(leaves, function(d) {return d.N});
       })
@@ -267,9 +281,10 @@ function createWorldMap(){
     for (var i=0; i<data_nest.length; ++i){
       var count_by_country = d3.map();
       var country_count = data_nest[i].values;    
-
-      for (var j=0; j<country_count.length;  ++j){
-        count_by_country.set(country_count[j].key, country_count[j].values);
+      
+      for (var j=0; j<country_count.length;  ++j){        
+        count_by_country.set(country_count[j].key, 
+                             country_count[j].values);
       }
 
       count_by_date.set(data_nest[i].key, count_by_country);
@@ -280,13 +295,14 @@ function createWorldMap(){
     }
 
     
+    
     var countries = svg.selectAll(".country")  
       .data(topojson.feature(world, world.objects.countries).features)
       .enter().insert("path", ".graticule")
       .attr("class", function(d) {
         // console.log(d);
         var n = count_by_date.get(dte.date).get(String(d.id));
-        n = n !== undefined ? n : 0;
+        n = n !== undefined ? d3.sum(n, function(d) {return d.values;}) : 0;
         // console.log(n);
         return quantize(Math.log(n+1));})
       .attr("d", path);
@@ -305,12 +321,13 @@ function createWorldMap(){
 	    .style("z-index", "10")
 	    .style("visibility", "hidden");
     
-    console.log('AFter tooltip');
     addToolTip(countries, tooltip, htmlInsideTooltipFn);
   }
 }
 
 function updateMap(new_date){
+
+  keepOneWorld(); // Make sure there is only one world displayed
 
   var projection = d3.geo.mercator() 
     .scale((width + 1) / 1.65 / Math.PI)
@@ -320,9 +337,7 @@ function updateMap(new_date){
   var path = d3.geo.path()
     .projection(projection);
 
-  var quantize = d3.scale.quantize()
-    .domain([0, 6])
-    .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));  // Color
+  var quantize = createQuantize();
 
   var svg =  d3.select('#worldMap_g');
   
@@ -335,7 +350,7 @@ function updateMap(new_date){
     .enter().insert("path", ".graticule")
     .attr("class", function(d) {
       var n = count_by_date.get(new_date).get(String(d.id));
-      n = n !== undefined ? n : 0;
+      n = n !== undefined ? d3.sum(n, function(d) {return d.values;}) : 0;
       // console.log(n);
       return quantize(Math.log(n+1));})
     .attr("d", path);
@@ -390,18 +405,38 @@ function createKeyLegend(){
 
 createKeyLegend();
 
-
 //==============================================================================
 // Tooltip functions
 
 function htmlInsideTooltipFn(d, i){
-
-  var n = count_by_date.get(dte.date).get(String(d.id));
-  n = n !== undefined ? n : 0;
+  
+  var n = count_by_date.get(dte.date).get(String(d.id)); // n is an array with key : base_disiplin and value the number of project]
+  n = n !== undefined ? n : [0, 0, 0];
 
   htmlText = "<div align='center'>";
   htmlText += '<font color="red">' + country_num_to_iso3.get(d.id) + "</font> ";
-  htmlText += '   (' + n + ')';
+  htmlText += '<br><br>';
+  htmlText += "<table style='text-align:left'>";
+  
+  var insert_tag = function(s, tag){
+    return '<' + tag + '>' + s + '</' + tag + '>';
+  }
+  
+  var safe_get = function(obj, prop, return_val){
+    var val = obj[prop];
+    return_val = return_val !== undefined ? return_val : 0;
+    return val !== undefined ? val : return_val;
+  }
+  
+  var base_disciplin = ['Social Sciences', 'Base Sciences', 'Biology/Medecine']
+  
+  for (var i=0; i < 3; ++i){
+    row_text = insert_tag(base_disciplin[i] + ' :', 'td') +  
+      insert_tag(safe_get(n[i], 'values', 0), 'td');    
+    htmlText += insert_tag(row_text, 'tr');
+  }
+  
+  htmlText +='</table>'
   htmlText += '</div>';
   // Add something here (Such as descriptions or date of tripe)  
   return htmlText;
@@ -417,6 +452,24 @@ function addToolTip(g, tooltip, htmlInsideTooltipFn){
 	  .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
 	  .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
 }
+
+
+//==============================================================================
+// Filtering/ Facetting/ Checkboxes
+var checkboxes;
+function updateCheckBox(){
+  console.log('updater');
+
+  checkboxes = d3.selectAll('.filter_checkbox')  
+    .on("change",  function(d){
+      console.log(d);
+      setTimeout(createWorldMap(), 500);
+      return;
+    }); 
+  // Redraw the entire plot # not optimal but to bad;
+}
+
+updateCheckBox();
 
 //==============================================================================
 // Misc
