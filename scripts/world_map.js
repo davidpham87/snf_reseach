@@ -183,16 +183,12 @@ function keepOneWorld(){
     return;
   }
 
-  for (var i=1; i<svg[0].length; ++i){
-    svg[0][i].remove();    
+  for (var i=0; i<svg[0].length-1; ++i){
+    svg[0][i].remove();
   }
 }
 
-
 function createWorldMap(){
-
-
-  keepOneWorld(); // Make sure there is only one world displayed
 
   //d3.geo.azimuthalEqualArea()
   var projection = d3.geo.mercator() 
@@ -261,8 +257,8 @@ function createWorldMap(){
     .ease(Math.sqrt)
     .style('opacity', 1e-16)
     .remove();
-
   svg.attr("id", 'worldMap_g');
+
 
   function createMap(error, world, data) {
     data_ts = data;
@@ -293,8 +289,6 @@ function createWorldMap(){
     if (!count_by_date.has(dte.date)){
       return;
     }
-
-    
     
     var countries = svg.selectAll(".country")  
       .data(topojson.feature(world, world.objects.countries).features)
@@ -322,6 +316,7 @@ function createWorldMap(){
 	    .style("visibility", "hidden");
     
     addToolTip(countries, tooltip, htmlInsideTooltipFn);
+    keepOneWorld(); // Make sure there is only one world displayed
   }
 }
 
@@ -362,6 +357,15 @@ function updateMap(new_date){
 
 createWorldMap();
 
+// Make sure there is always at least one world
+setInterval(function(){
+  var svg =  d3.selectAll('#worldMap g');
+  if (svg[0].length < 1) {
+    createWorldMap()
+  }
+}, 100)
+
+//==============================================================================
 // The axis mapping color and the number
 function createKeyLegend(){
   
@@ -462,7 +466,6 @@ function updateCheckBox(){
 
   checkboxes = d3.selectAll('.filter_checkbox')  
     .on("change",  function(d){
-      console.log(d);
       setTimeout(createWorldMap(), 500);
       return;
     }); 
