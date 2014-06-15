@@ -477,16 +477,14 @@ function addToolTip(g, tooltip, htmlInsideTooltipFn){
 
 //==============================================================================
 // Filtering/ Facetting/ Checkboxes
-var checkboxes;
 function updateCheckBox(){
-  console.log('updater');
 
-  checkboxes = d3.selectAll('.filter_checkbox')  
+  var checkboxes = d3.selectAll('.filter_checkbox')  
     .on("change",  function(d){
       setTimeout(createWorldMap(), 500);
       return;
     }); 
-  // Redraw the entire plot # not optimal but to bad;
+  // Redraw the entire plot # not optimal but not too bad;
 }
 
 updateCheckBox();
