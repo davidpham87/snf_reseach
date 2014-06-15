@@ -29,7 +29,7 @@ function drawchart29822b5f217f(){
     },
     {
       "project_year": 2008,
-      "base_disc_name": "Biology_Med",
+      "base_disc_name": "Biology/Medical Sciences",
       "N": 207 
     },
     {
@@ -44,7 +44,7 @@ function drawchart29822b5f217f(){
     },
     {
       "project_year": 2009,
-      "base_disc_name": "Biology_Med",
+      "base_disc_name": "Biology/Medical Sciences",
       "N": 190 
     },
     {
@@ -59,7 +59,7 @@ function drawchart29822b5f217f(){
     },
     {
       "project_year": 2010,
-      "base_disc_name": "Biology_Med",
+      "base_disc_name": "Biology/Medical Sciences",
       "N": 211 
     },
     {
@@ -69,7 +69,7 @@ function drawchart29822b5f217f(){
     },
     {
       "project_year": 2011,
-      "base_disc_name": "Biology_Med",
+      "base_disc_name": "Biology/Medical Sciences",
       "N": 275 
     },
     {
@@ -89,7 +89,7 @@ function drawchart29822b5f217f(){
     },
     {
       "project_year": 2012,
-      "base_disc_name": "Biology_Med",
+      "base_disc_name": "Biology/Medical Sciences",
       "N": 247 
     },
     {
@@ -104,7 +104,7 @@ function drawchart29822b5f217f(){
     },
     {
       "project_year": 2013,
-      "base_disc_name": "Biology_Med",
+      "base_disc_name": "Biology/Medical Sciences",
       "N": 229 
     },
     {
@@ -119,7 +119,7 @@ function drawchart29822b5f217f(){
     },
     {
       "project_year": 2014,
-      "base_disc_name": "Biology_Med",
+      "base_disc_name": "Biology/Medical Sciences",
       "N": 163 
     } 
   ]
