@@ -1,6 +1,6 @@
 var width = 960,
-  height = 480,
-  height_slider = 80;
+height = 480,
+height_slider = 80;
 //===============================================================================
 
 var date_format = d3.time.format("%Y-%m-%d");
@@ -188,6 +188,19 @@ function keepOneWorld(){
   }
 }
 
+
+
+// Return which boxes are checked
+
+function filterByCheckbox(){
+  var cb = d3.selectAll('.filter_checkbox');
+  cb =  cb[0].filter(function(d){
+    return d.checked;
+  });
+  return cb.map(function(d) {return d.value.toString();});
+}
+
+
 function createWorldMap(){
 
   //d3.geo.azimuthalEqualArea()
@@ -290,14 +303,14 @@ function createWorldMap(){
       return;
     }
     
+    var disciplins = filterByCheckbox();
+
     var countries = svg.selectAll(".country")  
       .data(topojson.feature(world, world.objects.countries).features)
       .enter().insert("path", ".graticule")
       .attr("class", function(d) {
-        // console.log(d);
         var n = count_by_date.get(dte.date).get(String(d.id));
-        n = n !== undefined ? d3.sum(n, function(d) {return d.values;}) : 0;
-        // console.log(n);
+        n = n !== undefined ? d3.sum(n, function(d) {return (disciplins.indexOf(d.key) > -1) ? d.values : 0;}) : 0; // Sum the element of the arrays such that the keys are in disciplins;
         return quantize(Math.log(n+1));})
       .attr("d", path);
 
@@ -307,6 +320,7 @@ function createWorldMap(){
     //   .attr("d", path);
 
     // Tooltip for the countries
+    d3.select('#tooltip_worldmap').remove();
     var tooltip = d3.select("body")
 	    .append("div")
       .attr("class", "d3-tip worldMapTip")
@@ -340,13 +354,14 @@ function updateMap(new_date){
     return;
   }
 
+  var disciplins = filterByCheckbox();
+  
   var countries = svg.selectAll(".country")  
     .data(topojson.feature(world_data, world_data.objects.countries).features)
     .enter().insert("path", ".graticule")
     .attr("class", function(d) {
       var n = count_by_date.get(new_date).get(String(d.id));
-      n = n !== undefined ? d3.sum(n, function(d) {return d.values;}) : 0;
-      // console.log(n);
+      n = n !== undefined ? d3.sum(n, function(d) {return (disciplins.indexOf(d.key) > -1) ? d.values : 0;}) : 0; // Sum the element of the arrays such that the keys are in disciplins;
       return quantize(Math.log(n+1));})
     .attr("d", path);
   
@@ -473,6 +488,14 @@ function updateCheckBox(){
 }
 
 updateCheckBox();
+
+function checkAll() {
+  checkboxes.property('checked', true);
+}
+
+function unCheckAll() {
+  checkboxes.property('checked', false);
+}
 
 //==============================================================================
 // Misc
