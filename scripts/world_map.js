@@ -1,3 +1,8 @@
+// A little bit to long code
+// Next time create an global object/dictionnary myplot with all the elements 
+// (scales, color, data, ...) inside it in order to share with accross functions.
+// Note: learn how to create a module in js.
+
 var width = 960,
 height = 480,
 height_slider = 80;
@@ -175,7 +180,6 @@ createBrush();
 //===============================================================================
 // World map
 
-
 // Make sure there are not two worlds
 function keepOneWorld(){
   var svg =  d3.selectAll('#worldMap g');
@@ -187,8 +191,6 @@ function keepOneWorld(){
     svg[0][i].remove();
   }
 }
-
-
 
 // Return which boxes are checked
 
