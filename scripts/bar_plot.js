@@ -146,8 +146,7 @@ function drawchart29822b5f217f(){
       .y(function(d) { return d[opts.y] })
       .width(opts.width)
       .height(opts.height)
-    
-    
+        
     d3.select("#barplot")
       .datum(data)
       .transition().duration(500)
