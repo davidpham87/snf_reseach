@@ -69,12 +69,15 @@ var draw_line_plot = function(country_num_id){
       .tickFormat(d3.format(',.0f'));
 
     var lp_data_filter = data_dl.lp_data.get(country_num_id);
-    lp_data_filter[0].key = 'Social Sciences';
-    lp_data_filter[1].key = 'Base Sciences/Engineering';
-    lp_data_filter[2].key = 'Biology/Medical Sciences';
-    lp_data_filter[3] =  {key :'Switzerland (Total)', 
-                          values: data_dl.swiss_rolled, color: "#898989"};
 
+    if (lp_data_filter.length > 0){
+      lp_data_filter[0].key = 'Social Sciences';
+      lp_data_filter[1].key = 'Base Sciences/Engineering';
+      lp_data_filter[2].key = 'Biology/Medical Sciences';
+      lp_data_filter[3] =  {key :'Switzerland (Total)', 
+                            values: data_dl.swiss_rolled, color: "#898989"};
+    }
+    
     d3.select('#worldMapLinePlot')
       .datum(lp_data_filter)
       .call(chart);
