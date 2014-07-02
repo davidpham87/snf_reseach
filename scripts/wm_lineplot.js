@@ -70,6 +70,7 @@ var draw_line_plot = function(country_num_id){
 
     var lp_data_filter = data_dl.lp_data.get(country_num_id);
     console.log(lp_data_filter);
+
     if (lp_data_filter.length == 0){
       return chart;
     }
