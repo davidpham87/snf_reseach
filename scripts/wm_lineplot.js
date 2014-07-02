@@ -73,7 +73,7 @@ var draw_line_plot = function(country_num_id){
     if (typeof(lp_data_filter) == 'undefined'){
       d3.select('#worldMapLinePlot')
         .datum([{key :'Switzerland (Total)', 
-                 values: data_dl.swiss_rolled, color: "#898989"};])
+                 values: data_dl.swiss_rolled, color: "#898989"}])
         .call(chart);
       return chart;
     }
