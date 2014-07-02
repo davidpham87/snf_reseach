@@ -70,18 +70,19 @@ var draw_line_plot = function(country_num_id){
 
     var lp_data_filter = data_dl.lp_data.get(country_num_id);
 
-    if (lp_data_filter.length > 0){
-      lp_data_filter[0].key = 'Social Sciences';
-      lp_data_filter[1].key = 'Base Sciences/Engineering';
-      lp_data_filter[2].key = 'Biology/Medical Sciences';
-      lp_data_filter[3] =  {key :'Switzerland (Total)', 
-                            values: data_dl.swiss_rolled, color: "#898989"};
+    if (lp_data_filter.length == 0){
+      return chart;
     }
     
+    lp_data_filter[0].key = 'Social Sciences';
+    lp_data_filter[1].key = 'Base Sciences/Engineering';
+    lp_data_filter[2].key = 'Biology/Medical Sciences';
+    lp_data_filter[3] =  {key :'Switzerland (Total)', 
+                          values: data_dl.swiss_rolled, color: "#898989"};
     d3.select('#worldMapLinePlot')
       .datum(lp_data_filter)
       .call(chart);
-
+    
     //TODO: Figure out a good way to do this automatically
     nv.utils.windowResize(chart.update);
     //nv.utils.windowResize(function() { d3.select('#chart1 svg').call(chart) });
