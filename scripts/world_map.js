@@ -314,7 +314,10 @@ function createWorldMap(){
         var n = count_by_date.get(dte.date).get(String(d.id));
         n = n !== undefined ? d3.sum(n, function(d) {return (disciplins.indexOf(d.key) > -1) ? d.values : 0;}) : 0; // Sum the element of the arrays such that the keys are in disciplins;
         return quantize(Math.log(n+1));})
-      .attr("d", path);
+      .attr("d", path)
+      .on("click", function(d, i){
+        draw_line_plot(d.id); // Redraw the svg line_plot #worldMapLinePlot
+      });
 
     // var borders = svg.insert("path", ".graticule")
     //   .datum(topojson.mesh(world_data, world_data.objects.countries, function(a, b) { return a !== b; }))
@@ -331,7 +334,7 @@ function createWorldMap(){
 	    .style("z-index", "10")
 	    .style("visibility", "hidden");
     
-    addToolTip(countries, tooltip, htmlInsideTooltipFn);
+    addToolTip(countries, tooltip, htmlInsideTooltipFn);    
     keepOneWorld(); // Make sure there is only one world displayed
   }
 }
@@ -365,7 +368,10 @@ function updateMap(new_date){
       var n = count_by_date.get(new_date).get(String(d.id));
       n = n !== undefined ? d3.sum(n, function(d) {return (disciplins.indexOf(d.key) > -1) ? d.values : 0;}) : 0; // Sum the element of the arrays such that the keys are in disciplins;
       return quantize(Math.log(n+1));})
-    .attr("d", path);
+    .attr("d", path)      
+    .on("click", function(d, i){
+        draw_line_plot(d.id); // Redraw the svg line_plot #worldMapLinePlot
+      });
   
   var tooltip = d3.select('#tooltip_worldmap');  
   addToolTip(countries, tooltip, htmlInsideTooltipFn);

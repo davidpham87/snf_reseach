@@ -1,0 +1,12 @@
+base
+data.table
+ggplot2
+gridExtra
+knitr
+maptools
+plyr
+rCharts
+RColorBrewer
+rgdal
+slidify
+sp

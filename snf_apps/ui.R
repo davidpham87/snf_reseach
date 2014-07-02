@@ -2,8 +2,19 @@ shinyUI(fluidPage(
   tags$h2("Tracking the Swiss Post Docs"),  
   
   fluidRow(
-    p("Check where the Swiss postdoc have been researching!")
+    p("Check where the Swiss postdoc have been researching: 
+        This representent where the Swiss junior researchers have been working for the past years"),
+    p("The two *Rmd* files explaining the Data processing and the exploratory data analysis are published at the following links on Rpubs:"),
+    a("Data Processing", href = "http://rpubs.com/davidpham87/19545"),  
+    br(),
+    a("Exploratory Data Analysis", href = "http://rpubs.com/davidpham87/19544"),
+    br(), br(),
+    div("If you want the d3.js version, please follow this link: "),
+    a("http://davidpham87.github.io/snf_research/", href = "http://davidpham87.github.io/snf_research/"),
+    br(),
+    p("You just need to use press the play button to launch the animation or check the boxes to have subset the data.")
   ),
+  
   # Copy the line below to make a slider bar
   fluidRow(
     column(6, 
