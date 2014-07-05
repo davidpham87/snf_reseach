@@ -18,6 +18,7 @@ The two *Rmd* files are published at the following link on Rpubs:
 [EDA](http://rpubs.com/davidpham87/19544)
 
 The shiny apps can be run here:
-
 [Shiny.io Apps](https://davidpham87.shinyapps.io/snf_apps/)
 
+The d3.js version of the shiny apss can be found here:
+[github.io/snf_research](http://davidpham87.github.io/snf_research/)
